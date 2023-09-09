@@ -8,8 +8,10 @@ app.use(logger)
 
 const productsRouter = require('./routes/productsRouter');
 const usersRouter = require('./routes/usersRouter');
+const categoriesRouter = require('./routes/categoriesRouter');
 app.use('/products', productsRouter);
 app.use('/users', usersRouter);
+app.use('/categories', categoriesRouter);
 
 
 try {

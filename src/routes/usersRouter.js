@@ -5,7 +5,8 @@ const usersMiddleware = require('../middlewares/usersMiddleware')
 
 router.use(usersMiddleware.userLogger)
 
-router.post('/', usersController.add)
+router.post('/', usersMiddleware.dataValidation, usersController.add)
 router.get('/', usersController.getAll)
+router.get('/login', usersController.login)
 
 module.exports = router

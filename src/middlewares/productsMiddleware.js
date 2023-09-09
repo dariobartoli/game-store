@@ -50,6 +50,9 @@ const dataValidation = (req, res, next) => {
             .min(1)
             .max(1000)
             .precision(2) //precisar la cantidad de decimales que puede tener el precio
+            .required(),
+        category: Joi.string()
+            .alphanum()
             .required()
     })
     const validationResult = schema.validate(req.body)

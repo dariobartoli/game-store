@@ -48,5 +48,6 @@ const isAlphaNum = (req, res, next) => {
     }
 }
 
+
 module.exports = {userLogger, dataValidation, isAlphaNum}
 
