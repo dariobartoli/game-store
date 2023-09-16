@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const productController = require('../controllers/productsController')
-const productMiddleware = require('../middlewares/productsMiddleware')
+const productController = require('../controllers/products')
+const productMiddleware = require('../middlewares/products')
 
 router.use(productMiddleware.productLogger)
 router.get('/', productController.getAll)

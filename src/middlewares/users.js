@@ -7,7 +7,7 @@ const userLogger = (req, res, next) =>{
 
 const dataValidation = (req, res, next) => {
     const schema = Joi.object({
-        userName: Joi.string()
+        firstName: Joi.string()
             .alphanum()
             .min(3)
             .max(30)

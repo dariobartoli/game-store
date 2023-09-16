@@ -6,12 +6,18 @@ const logger = require('./middlewares/global')
 
 app.use(logger)
 
-const productsRouter = require('./routes/productsRouter');
-const usersRouter = require('./routes/usersRouter');
-const categoriesRouter = require('./routes/categoriesRouter');
+const productsRouter = require('./routes/products');
+const usersRouter = require('./routes/users');
+const categoriesRouter = require('./routes/categories');
+const authRouter = require('./routes/auth');
+const adminRouter = require('./routes/admin');
+const publicationRouter = require('./routes/publications');
 app.use('/products', productsRouter);
 app.use('/users', usersRouter);
 app.use('/categories', categoriesRouter);
+app.use('/auth', authRouter);
+app.use('/admin', adminRouter);
+app.use('/publications', publicationRouter)
 
 
 try {
