@@ -27,3 +27,13 @@ try {
 } catch (error) {
     console.log("ha ocurrido en error al montar la aplicacion "+error);
 }
+
+
+/* const redisClient = require('./config/redis')
+console.log(redisClient);
+
+(async () => {
+    redisClient.set('texto', 'valor para texto');
+    const data = await redisClient.get('texto');
+    console.log(data);
+})(); */

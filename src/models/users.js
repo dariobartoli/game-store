@@ -1,5 +1,6 @@
 const mongoose = require("../config/mongo");
-const bcrypt = require("bcrypt")
+const bcrypt = require("bcrypt");
+const redisClient = require("../config/redis");
 require('dotenv').config();
 
 const userSchema = new mongoose.Schema(
@@ -16,6 +17,28 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+/* userSchema.pre('save', async function(next) {
+  let user = this;
+  if (!user.isModified('password')) return next();
+  const salt = await bcrypt.genSaltSync(parseInt(process.env.SALT));
+  const passwordHashed = await bcrypt.hash(user.password, salt)
+  user.password = passwordHashed;
+  next();
+}); */
+userSchema.post('save', function(doc, next){
+  const user = JSON.stringify({
+    id: doc._id,
+    firstName: doc.firstName,
+    lastName: doc.lastName,
+    email: doc.email,
+    publications: doc.publications
+  })
+  redisClient.set(doc._id.valueOf(), user, {EX: parseInt(process.env.REDIS_TTL)})
+  next();
+})
+
+
 
 userSchema.set("toJSON", {
   transform: function (doc, ret) {
