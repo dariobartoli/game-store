@@ -4,6 +4,7 @@ const publicationSchema = new mongoose.Schema({
     title: String,
     text: String,
     active: Boolean,
+    image: String,
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Users",

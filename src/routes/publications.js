@@ -1,17 +1,21 @@
-const express = require('express')
-const router = express.Router()
-const publicationController = require('../controllers/publications')
-const tokenAuth = require('../middlewares/tokenAuth')
-const publicationMiddleware = require('../middlewares/publications')
+const express = require("express");
+const router = express.Router();
+const publicationController = require("../controllers/publications");
+const tokenAuth = require("../middlewares/tokenAuth");
+const publicationMiddleware = require("../middlewares/publications");
 
 
-router.get('/', publicationController.getAll)
-router.use(tokenAuth.userVerify)
+router.get("/", publicationController.getAll);
+router.use(tokenAuth.userVerify);
 
-router.post('/', publicationMiddleware.dataValidation, publicationController.create)
-router.put('/', publicationController.set)
-router.delete('/', publicationController.delet)
+router.post("/", publicationController.create);
+router.put("/", publicationController.set);
+router.delete("/", publicationController.delet);
 
+router.post(
+  "/probando",
+  publicationMiddleware.upload,
+  publicationController.probando
+);
 
-
-module.exports = router
+module.exports = router;
