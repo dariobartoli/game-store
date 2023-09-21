@@ -1,6 +1,8 @@
+const redisClient = require("../config/redis");
 const PublicationModel = require("../models/publications");
 const UserModel = require("../models/users");
 const path = require('path')
+require('dotenv').config();
 
 const create = async (req, res) => {
   try {
@@ -15,7 +17,7 @@ const create = async (req, res) => {
     if (!userLogger) {
       return res.status(404).json({ message: "User not found" });
     }
-    userLogger.publications.push({ publication });
+    userLogger.publications.push(publication._id);
     Promise.all([publication.save(), userLogger.save()]);
     return res.status(201).json({
       message: "publication has been created successful",
@@ -30,21 +32,45 @@ const create = async (req, res) => {
 
 const getAll = async (req, res) => {
   try {
-    const publications = await PublicationModel.find().populate("user");
+    const publications = await PublicationModel.find();
     return res.status(200).json({ message: "all publications", publications });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ message: "it has ocurred an error", error: error });
+    return res.status(500).json({ message: "it has ocurred an error", error: error });
   }
 };
 
+const get = async(req,res) => {
+  try {
+    const idCache = req.user.id.concat("publication");
+    const publicationCache = await redisClient.get(idCache)
+    if(publicationCache){
+      console.log("devuelto de cache");
+      return res.status(200).json(JSON.parse(publicationCache))
+    }
+    const userProfile = await UserModel.findById(req.user.id).populate('publications')
+    const publications = userProfile.publications
+    if(publications.length == 0){
+      throw new Error("you don't have publications")
+    }
+    console.log("devuelto de db");
+    const cache = JSON.stringify({
+      publications
+    })
+    redisClient.set(idCache.valueOf(), cache, {EX: parseInt(process.env.REDIS_TTL)})
+    return res.status(200).json({publications});
+  } catch (error) {
+    return res.status(500).json({ message: error.message});
+  }
+}
+
 const set = async (req, res) => {
   try {
+    const idCache = req.user.id.concat('publication')
+    const publicationCache = await redisClient.get(idCache)
     const { id, title, text } = req.body;
     const userLogged = await UserModel.findById({ _id: req.user.id });
     const publicationIndex = userLogged.publications.findIndex(
-      (element) => element.publication._id.toString() === id
+      (element) => element.toString() === id
     );
     if (publicationIndex === -1) {
       throw new Error("Publication not found");
@@ -54,14 +80,15 @@ const set = async (req, res) => {
       { title: title, text: text },
       { new: true } // Para obtener la publicación actualizada
     );
-    console.log(userLogged.publications[publicationIndex]);
-    userLogged.publications[publicationIndex].publication.title = title;
-    userLogged.publications[publicationIndex].publication.text = text;
-    console.log(userLogged.publications[publicationIndex]);
-    await userLogged.save();
-    return res
-      .status(200)
-      .json({ message: "post edited", publication: updatedPublication });
+    if(publicationCache){ //si existe cache, sobreescribirla con la nueva informacion de publications
+      const user = await userLogged.populate('publications')
+      const publications = user.publications
+      const cache = JSON.stringify({
+        publications
+      })
+      redisClient.set(idCache.valueOf(), cache, {EX: parseInt(process.env.REDIS_TTL)})
+    }
+    return res.status(200).json({ message: "publication edited", publication: updatedPublication });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -72,15 +99,12 @@ const delet = async (req, res) => {
     const filter = req.body.id;
     const userLogged = await UserModel.findById({ _id: req.user.id });
     const publicationIndex = userLogged.publications.findIndex(
-      (element) => element.publication._id.toString() === filter
+      (element) => element.toString() === filter
     );
     if (publicationIndex === -1) {
       throw new Error("Publication not found");
     }
     await PublicationModel.findByIdAndDelete({ _id: filter });
-
-    userLogged.publications.splice(publicationIndex, 1);
-    await userLogged.save();
     return res.status(200).json({ message: "publication deleted" });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -122,4 +146,4 @@ const probando = async (req, res) => {
   }
 };
 
-module.exports = { create, getAll, set, delet, probando };
+module.exports = { create, getAll, set, delet, probando, get};

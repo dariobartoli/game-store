@@ -9,9 +9,10 @@ const userSchema = new mongoose.Schema(
     lastName: String,
     email: { type: String, required: true, index: { unique: true } },
     password: {type: String, required: true, select: false},
-    publications: [{
-      publication: Object,
-    }],
+    publications: [{type: mongoose.Schema.Types.ObjectId, ref: "Publications"}],
+    messages: [{type: mongoose.Schema.Types.ObjectId, ref: "Messages"}],
+    friends: [{type: mongoose.Schema.Types.ObjectId, ref: "Users"}],
+    friendsRequest: Array,
     admin: Boolean,
     loginAuthorization: Boolean,
   },
@@ -46,6 +47,10 @@ userSchema.set("toJSON", {
     delete ret.__v;
     delete ret.createdAt;
     delete ret.updatedAt;
+/*     if (ret.messages && Array.isArray(ret.messages)) {
+      // Conservar solo los ID de los mensajes
+      ret.messages = ret.messages.map((message) => message._id); // reemplazamos cada objecto de mensaje por su id
+    } */
   },
 });
 

@@ -12,12 +12,14 @@ const categoriesRouter = require('./routes/categories');
 const authRouter = require('./routes/auth');
 const adminRouter = require('./routes/admin');
 const publicationRouter = require('./routes/publications');
+const messagesRouter = require('./routes/messages');
 app.use('/products', productsRouter);
 app.use('/users', usersRouter);
 app.use('/categories', categoriesRouter);
 app.use('/auth', authRouter);
 app.use('/admin', adminRouter);
 app.use('/publications', publicationRouter)
+app.use('/messages', messagesRouter)
 
 
 try {
@@ -28,12 +30,3 @@ try {
     console.log("ha ocurrido en error al montar la aplicacion "+error);
 }
 
-
-/* const redisClient = require('./config/redis')
-console.log(redisClient);
-
-(async () => {
-    redisClient.set('texto', 'valor para texto');
-    const data = await redisClient.get('texto');
-    console.log(data);
-})(); */

@@ -37,7 +37,6 @@ const disabledPublication = async(req,res) => {
         if(!publication){
             throw new Error("publication doesn't exist")
         }
-        console.log(user.publications[publicationIndex].publication.active = false);
         user.publications[publicationIndex].publication.active = false
         await PublicationModel.updateOne({_id: idPub}, update);
         user.save()
