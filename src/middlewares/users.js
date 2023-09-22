@@ -1,7 +1,7 @@
 const Joi = require('joi');
 
 const userLogger = (req, res, next) =>{
-    console.log("it go for users");
+    //console.log("it go for users");
     next()
 }
 

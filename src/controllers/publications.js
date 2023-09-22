@@ -115,13 +115,13 @@ const probando = async (req, res) => {
   try {
     const { title, text } = req.body;
     const { filename, size } = req.file;
-    const ext = path.extname(req.file.originalname).slice(1)
+/*     const ext = path.extname(req.file.originalname).slice(1)
     if(size > 3000000){
       throw new Error("file too much heavy")
     }
     if(!ext.includes("jpg"||"jpeg"||"png")){
       throw new Error("file extension doesn't support")
-    }
+    } */
     let publication = new PublicationModel({
       title,
       text,

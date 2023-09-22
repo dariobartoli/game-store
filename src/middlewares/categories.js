@@ -21,6 +21,4 @@ const dataValidation = (req, res, next) => {
     }
 }
 
-
-
 module.exports = {dataValidation}

@@ -2,12 +2,13 @@ const express = require('express');
 const router = express.Router();
 const productController = require('../controllers/products')
 const productMiddleware = require('../middlewares/products')
+const multerMiddleware = require('../middlewares/multer')
 
 router.use(productMiddleware.productLogger)
 router.get('/', productController.getAll)
-router.post('/',productMiddleware.dataValidation , productController.add)
+router.post('/', multerMiddleware.upload, productMiddleware.dataValidation, productController.add)
 router.delete('/:id',productMiddleware.isAlphaNum, productController.del)
-router.put('/:id',productMiddleware.isAlphaNum, productMiddleware.dataValidation, productController.set)
+router.put('/:id', multerMiddleware.upload, productController.set)
 router.get('/product/:id',productMiddleware.isAlphaNum, productController.get)
 
 

@@ -31,8 +31,8 @@ const login = async (req, res) => {
       if(!logged) return res.status(401).json({ message: "password incorrect"});
   
       const token = jwt.sign(
-        { email: user.email, id: user._id, admin: user.admin },
-        process.env.TOKEN_SIGNATURE)
+        { email: user.email, id: user._id, admin: user.admin, authorization: user.loginAuthorization},
+        process.env.TOKEN_SIGNATURE, {expiresIn: '10m'})
       const userCache = JSON.stringify({
         id: user._id,
         firstName: user.firstName,
@@ -46,9 +46,24 @@ const login = async (req, res) => {
       return res.status(200).json({ message: "login successful", token});
     
     } catch (error) {
-      console.error(error)
-      return res.status(500).json({ message: "it have ocurred an error" })
+      return res.status(500).json({ message: "it has ocurred an error" })
     }
 };
 
-module.exports = {register, login}
+const logout = async(req,res) => {
+  try {
+    const bearerToken = req.header('authorization')
+    if (!bearerToken) return res.status(401).json({ message: "invalid data"});
+    const key = bearerToken.concat('logout')
+    const blackList = JSON.stringify({
+      token: bearerToken
+    })
+    let expirationInSeconds = 3600
+    redisClient.set(key.valueOf(), blackList, {EX: expirationInSeconds})
+    return res.status(200).json({ message: "logout successful"});
+  } catch (error) {
+    return res.status(500).json({ message: "it has ocurred an error" })
+  }
+}
+
+module.exports = {register, login, logout}

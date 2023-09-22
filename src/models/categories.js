@@ -1,10 +1,21 @@
-const mongoose = require('../config/mongo')
+const mongoose = require("../config/mongo");
 
-const categorySchema = new mongoose.Schema({
+const categorySchema = new mongoose.Schema(
+  {
     nameCategory: String,
-    description: String
-  }, {timestamps: true});
-  
-const CategoryModel = mongoose.model('Categories', categorySchema);
+    description: String,
+  },
+  { timestamps: true }
+);
 
-module.exports = CategoryModel
+categorySchema.set("toJSON", {
+  transform: function (doc, ret) {
+    delete ret.__v;
+    delete ret.createdAt;
+    delete ret.updatedAt;
+  },
+});
+
+const CategoryModel = mongoose.model("Categories", categorySchema);
+
+module.exports = CategoryModel;

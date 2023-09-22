@@ -1,5 +1,5 @@
 const logger = (req, res, next) => {
-    console.log("paso siempre por aqui");
+    //console.log("paso siempre por aqui");
     next();
 }
 
