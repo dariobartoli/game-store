@@ -8,7 +8,7 @@ const register = async (req, res) => {
     try {
         let {firstName, lastName, email, password} = req.body
         let passwordHashed = await bcrypt.hash(password, 10)
-        let newUser = new UserModel({firstName, lastName, email, password: passwordHashed, admin: false, loginAuthorization: true})
+        let newUser = new UserModel({firstName, lastName, email, password: passwordHashed, admin: false, loginAuthorization: true, wallet: 1000})
         const user = await newUser.save()
         const sanitizedUser = { ...user._doc }; //creamos una copia del usuario y eliminamos la pass al json que queremos mostrar
         delete sanitizedUser.password;

@@ -4,11 +4,14 @@ const productSchema = new mongoose.Schema({
     gameName: String,
     description: String,
     coverImage: String,
+    developer: String,
+    publisher: String,
     variant: [{
       edition: String,
       price: Number
     }],
     category: [{type: mongoose.Schema.Types.ObjectId, ref: "Categories"}],
+    reviews: [{type: mongoose.Schema.Types.ObjectId, ref: "Reviews"}],
   }, {timestamps: true});
 
 productSchema.set("toJSON", {

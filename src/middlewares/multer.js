@@ -24,4 +24,22 @@ const upload = multer({
   },
 }).single("imagen"); //single que sera solo una imagen la que subira, el parametro es el nombre de la key
 
-module.exports = {upload}
+const uploadMulti = multer({
+  storage: storage,
+  limits: {
+    fileSize: 3000000, // Limitamos el tamaño de cada imagen a 3MB
+  },
+  fileFilter: (req, file, cb) => {
+    const fileTypes = /jpeg|jpg|png/;
+    const mimetype = fileTypes.test(file.mimetype); // Comprobamos si coincide la extensión
+    const extName = fileTypes.test(path.extname(file.originalname)); // Sacamos la extensión del nombre del archivo y comprobamos
+    if (mimetype && extName) {
+      return cb(null, true);
+    }
+    cb("Error, file doesn't support");
+  },
+}).array("imagenes", 10); // "imagenes" es el nombre del campo en el formulario y 10 es el número máximo de imágenes permitidas
+
+
+
+module.exports = {upload, uploadMulti}

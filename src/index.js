@@ -13,13 +13,19 @@ const authRouter = require('./routes/auth');
 const adminRouter = require('./routes/admin');
 const publicationRouter = require('./routes/publications');
 const messagesRouter = require('./routes/messages');
+const cartRouter = require('./routes/carts');
+const wishlistRouter = require('./routes/wishlist');
+const reviewRouter = require('./routes/reviews');
 app.use('/products', productsRouter);
 app.use('/users', usersRouter);
 app.use('/categories', categoriesRouter);
 app.use('/auth', authRouter);
 app.use('/admin', adminRouter);
-app.use('/publications', publicationRouter)
-app.use('/messages', messagesRouter)
+app.use('/publications', publicationRouter);
+app.use('/messages', messagesRouter);
+app.use('/carts', cartRouter);
+app.use('/wishlist', wishlistRouter);
+app.use('/reviews', reviewRouter);
 
 
 try {

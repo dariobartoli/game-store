@@ -19,7 +19,8 @@ const get = async(req,res) => {
             return res.status(200).json({ message:"user data:" ,user: JSON.parse(userCache)}); 
         }
         console.log("devuelto de bd");
-        let user = await UserModel.findOne({_id: req.user.id}).select('_id email firstName lastName publications')
+        let user = await UserModel.findOne({_id: req.user.id}).select('_id email firstName lastName publications messages cart').populate("cart")
+        redisClient.set(req.user.id.valueOf(), JSON.stringify(user), {EX: parseInt(process.env.REDIS_TTL)})//guardar en cache si no está
         return res.status(200).json({ message:"user data:" ,user }); 
     } catch (error) {
         return res.status(500).json({message: "it has ocurred an error", error: error})
