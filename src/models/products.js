@@ -6,6 +6,7 @@ const productSchema = new mongoose.Schema({
     coverImage: String,
     developer: String,
     publisher: String,
+    images: Array,
     variant: [{
       edition: String,
       price: Number

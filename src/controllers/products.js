@@ -53,13 +53,11 @@ const add = async (req, res) => {
           price: parseFloat(req.body[`variant[${i}].price`])
         });
       }
-      console.log(req.body);
       for (let i = 0; req.body[`category[${i}]`]; i++) {
         console.log("hola");
         requestData.category.push(req.body[`category[${i}]`]);
       }
       requestData.coverImage = urlImage
-      console.log(requestData);
       let newProduct =  new ProductModel(requestData)
       newProduct.save()
       return res.status(201).json({ message:"product created"});  
@@ -67,6 +65,49 @@ const add = async (req, res) => {
       return res.status(500).json({message: error.message})
     }
   };
+
+const addImages = async(req, res) => {
+  try {
+    const id = req.body.id
+    const images = req.files
+    const uploadedImages = [];
+    const product = await ProductModel.findById(id)
+    if(!product){
+      throw new Error("this product doesn't exists")
+    }
+    const uploadPromises = images.map(async (image) => {
+      const imagePath = image.path;
+      try {
+        const result = await cloudinary.uploader.upload(imagePath);
+        uploadedImages.push(result.url);
+      } catch (error) {
+        throw new Error(error)
+      }
+    });
+    await Promise.all(uploadPromises); //de esta manera mejoré el tiempo de respuesta
+
+    for (let i = 0; i < images.length; i++) {
+      const imagePath = images[i].path;
+      fs.unlink(imagePath, (err) => {
+        if (err) {
+          throw new Error(err)
+        } else {
+          console.log('Archivo local eliminado con éxito.');
+        }
+      });
+    }
+    if(uploadedImages.length == 0){
+      throw new Error("there isn't anything for push in the product")
+    }
+    for (let i = 0; i < uploadedImages.length; i++) {
+      product.images.push(uploadedImages[i])
+    }
+    await product.save()
+    return res.status(201).json({ message:"images added"});
+  } catch (error) {
+    return res.status(500).json({message: error.message})
+  }
+}
 
 const del = async(req, res) => {
     try {
@@ -142,4 +183,4 @@ const get = async(req,res) => {
     }
 }
 
-module.exports = { getAll, add, del, set, get};
+module.exports = { getAll, add, del, set, get, addImages};

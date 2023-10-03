@@ -38,7 +38,7 @@ const uploadMulti = multer({
     }
     cb("Error, file doesn't support");
   },
-}).array("imagenes", 10); // "imagenes" es el nombre del campo en el formulario y 10 es el número máximo de imágenes permitidas
+}).array("images", 10); // "imagenes" es el nombre del campo en el formulario y 10 es el número máximo de imágenes permitidas
 
 
 

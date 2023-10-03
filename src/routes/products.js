@@ -10,6 +10,7 @@ router.post('/', multerMiddleware.upload, productMiddleware.dataValidation, prod
 router.delete('/:id',productMiddleware.isAlphaNum, productController.del)
 router.put('/:id', multerMiddleware.upload, productController.set)
 router.get('/product/:id',productMiddleware.isAlphaNum, productController.get)
+router.post('/images', multerMiddleware.uploadMulti, productController.addImages)
 
 
 module.exports = router;

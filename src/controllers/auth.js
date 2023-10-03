@@ -20,8 +20,13 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
     try {
-      let {email, password} = req.body
-      const user = await UserModel.findOne({email: email}).select('_id email password admin loginAuthorization firstName lastName publications')
+      let {emailOrNick, password} = req.body
+      const user = await UserModel.findOne({
+        $or: [
+          {email: emailOrNick},
+          {nickName: emailOrNick}
+        ]
+      }).select('_id email password admin loginAuthorization firstName lastName publications')
       if(!user) return res.status(401).json({ message: "user doesn't exist"});
       if(!user.loginAuthorization){
         return res.status(403).json({message: "invalid access"})
@@ -38,9 +43,9 @@ const login = async (req, res) => {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
-        publications: user.publications
+        publications: user.publications,
+        messages: user.messages
       })//guardamos la informacion del usuario que guardaremos en la cache, redis solo almacena texto
-
       redisClient.set(user.id.valueOf(), userCache, {EX: parseInt(process.env.REDIS_TTL)})//guardamos la informacion en la cache, con un id(key), la informacion y el tiempo de expiracion
       //usamos valueOf, para sacar solo el id, sino devolveria un object(id)
       return res.status(200).json({ message: "login successful", token});
