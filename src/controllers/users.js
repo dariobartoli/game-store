@@ -12,7 +12,7 @@ const getAll = async (req, res) => {
   } catch (error) {
     return res
       .status(500)
-      .json({ message: "it has ocurred an error", error: error });
+      .json({ message: error.message });
   }
 };
 
@@ -36,7 +36,7 @@ const get = async (req, res) => {
   } catch (error) {
     return res
       .status(500)
-      .json({ message: "it has ocurred an error", error: error });
+      .json({ message: error.message });
   }
 };
 

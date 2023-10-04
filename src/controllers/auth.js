@@ -14,7 +14,7 @@ const register = async (req, res) => {
         delete sanitizedUser.password;
         return res.status(201).json({ message:"user saved" , sanitizedUser});  
     } catch (error) {
-        return res.status(500).json({message: "it has ocurred an error", error: error})
+        return res.status(500).json({message: error.message})
     }
 }
 

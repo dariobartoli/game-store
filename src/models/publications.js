@@ -4,11 +4,16 @@ const publicationSchema = new mongoose.Schema({
     title: String,
     text: String,
     active: Boolean,
-    image: String,
+    images: Array,
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Users",
     },
+    likes: [{type: mongoose.Schema.Types.ObjectId, ref: "Users"}],
+    comments: [{
+      text: String,
+      user: {type: mongoose.Schema.Types.ObjectId, ref: "Users"}
+    }],
   }, {timestamps: true});
 
 
