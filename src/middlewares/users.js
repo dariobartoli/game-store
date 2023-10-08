@@ -8,12 +8,10 @@ const userLogger = (req, res, next) =>{
 const dataValidation = (req, res, next) => {
     const schema = Joi.object({
         firstName: Joi.string()
-            .alphanum()
             .min(3)
             .max(30)
             .required(),
         lastName: Joi.string()
-            .alphanum()
             .min(3)
             .max(30)
             .required(),
@@ -31,7 +29,7 @@ const dataValidation = (req, res, next) => {
         res.status(404).json({message: validationResult.error.details[0].message})
         console.error(validationResult.error.details);
     }else{
-    console.log('Data is valid');
+    //console.log('Data is valid');
     next()
     }
 }
@@ -43,7 +41,7 @@ const isAlphaNum = (req, res, next) => {
         res.status(404).json({message: validationResult.error.details[0].message})
         console.error(validationResult.error.details);
     }else{
-        console.log('Data is valid');
+        //console.log('Data is valid');
         next()
     }
 }

@@ -55,7 +55,7 @@ const set = async (req, res) => {
       return false;
     });
     if (filterNick) {
-      throw new Error("this nickname is already in use");
+      return res.status(409).json({message: "this nickname is already in use"})
     }
     let urlImage = "";
     if (image) {
@@ -70,7 +70,7 @@ const set = async (req, res) => {
         if (err) {
           throw new Error(err);
         } else {
-          console.log("Archivo local eliminado con éxito.");
+          //console.log("Archivo local eliminado con éxito.");
         }
       });
     }
@@ -104,22 +104,22 @@ const addFriend = async (req, res) => {
     const userId = req.user.id;
     const idFriend = req.body.id;
     if (userId == idFriend) {
-      throw new Error("dont possible execute this action");
+      return res.status(403).json({message: "dont possible execute this action"})
     }
     const userFriend = await UserModel.findById(idFriend);
     for (const element of userFriend.friendsRequest) {
       if (element == userId) {
-        throw new Error("you have already sended this request to this user");
+        return res.status(400).json({message: "you have already sended this request to this user"})
       }
     }
     for (const element of userFriend.friends) {
       if (element.valueOf() == userId) {
-        throw new Error("this user already is your friend");
+        return res.status(400).json({message: "this user already is your friend"})
       }
     }
     userFriend.friendsRequest.push(userId);
     userFriend.save();
-    return res.status(200).json({ message: "friend request sent" });
+    return res.status(201).json({ message: "friend request sent" });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -129,7 +129,7 @@ const responseRequest = async (req, res) => {
   try {
     const { id, response } = req.body;
     if (req.user.id == id) {
-      throw new Error("dont possible execute this action");
+      return res.status(403).json({message: "dont possible execute this action"})
     }
     const user = await UserModel.findById(req.user.id);
     const userFriend = await UserModel.findById(id);
@@ -137,7 +137,7 @@ const responseRequest = async (req, res) => {
       (request) => request.toString() == id
     );
     if (exists.length == 0) {
-      throw new Error("request dont found");
+      return res.status(409).json({message: "request dont found"})
     }
     if (response) {
       user.friends.push(userFriend);
@@ -146,7 +146,7 @@ const responseRequest = async (req, res) => {
         (request) => request.toString() !== id
       );
       await Promise.all([userFriend.save(), user.save()]);
-      return res.status(200).json({ message: "user added to your friends" });
+      return res.status(201).json({ message: "user added to your friends" });
     } else {
       user.friendsRequest = user.friendsRequest.filter(
         (request) => request.toString() !== id

@@ -11,17 +11,17 @@ const addToCart = async(req,res) => {
         const gameExists = await ProductModel.findById(game)
         const gameInYourLibrary = user.games.filter((item) => item.valueOf() == game)
         if(gameInYourLibrary.length > 0){
-            throw new Error("this game is already in your library")
+            return res.status(409).json({message: "this game is already in your library"})
         }
         const variantIngame = gameExists.variant.filter((item) => item._id == variant)
         if(variantIngame.length == 0){
-            throw new Error("invalid data in game/edition")
+            return res.status(400).json({message: "invalid data in game/edition"})
         }
         if(user.cart){
             const cart = await CartModel.findById(user.cart.valueOf())
             const searchGame = cart.gamesInCart.filter((item) => item.game == game)
             if(searchGame.length > 0){
-                throw new Error("this game is already in your cart");
+                return res.status(409).json({message: "this game is already in your cart"})
             }
             cart.gamesInCart.push({
                 variant,
@@ -48,7 +48,7 @@ const cleanCart = async(req, res) => {
         const idUser = req.user.id
         const user = await UserModel.findById(idUser)
         if (!user.cart) {
-            throw new Error("you don't have anything in your cart")
+            return res.status(400).json({message: "you don't have anything in your cart"})
         }
         await CartModel.findByIdAndRemove(user.cart);
         user.cart = undefined;
@@ -67,7 +67,7 @@ const removeToCart = async(req,res) => {
         const user = await UserModel.findById(idUser)
         const cart = await CartModel.findById(user.cart)
         if (!user.cart) {
-            throw new Error("you don't have anything in your cart")
+            return res.status(400).json({message: "you don't have anything in your cart"})
         }
         cart.gamesInCart = cart.gamesInCart.filter((game) => game._id.toString() != idGame)
         if(cart.gamesInCart.length == 0){
@@ -85,7 +85,7 @@ const getCart = async(req,res) => {
         const idUser = req.user.id
         const user = await UserModel.findById(idUser)
         if(!user.cart){
-            throw new Error("you don't have anything in your cart")
+            return res.status(400).json({message: "you don't have anything in your cart"})
         }
         const cartUser = await CartModel.findById(user.cart.valueOf()).populate("gamesInCart.game")
         return res.status(200).json({message: "your cart", cartUser})
@@ -99,7 +99,7 @@ const purchase = async(req,res) => {
         const userId = req.user.id
         const user = await UserModel.findById(userId)
         if (!user.cart) {
-            throw new Error("you don't have anything in your cart")
+            return res.status(400).json({message: "you don't have anything in your cart"})
         }
         const cart = await CartModel.findById(user.cart.valueOf())
         let total = 0
@@ -112,7 +112,7 @@ const purchase = async(req,res) => {
             console.log(total);
         }
         if(user.wallet < total.toFixed(2)){
-            throw new Error("insufficient balance")
+            return res.status(400).json({message: "insufficient balance"})
         }
 
         user.wishlist = user.wishlist.filter(wishlistGameId => {

@@ -29,7 +29,7 @@ const dataValidation = (req, res, next) => {
       .json({ message: validationResult.error.details[0].message });
     console.error(validationResult.error.details);
   } else {
-    console.log("Data is valid");
+    //console.log("Data is valid");
     next();
   }
 };
@@ -43,7 +43,7 @@ const isAlphaNum = (req, res, next) => {
       .json({ message: validationResult.error.details[0].message });
     console.error(validationResult.error.details);
   } else {
-    console.log("Data is valid");
+    //console.log("Data is valid");
     next();
   }
 };

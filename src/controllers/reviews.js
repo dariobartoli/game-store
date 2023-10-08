@@ -15,11 +15,11 @@ const add = async(req,res) => {
             recommended
         }
         if(!user.games.some(item => item.equals(gameObjectId))){
-            throw new Error("you haven't this game")
+            return res.status(409).json({message: "you haven't this game"})
         }
         const userHasReviewedGame = user.reviews.some(reviewId => game.reviews.includes(reviewId));
         if (userHasReviewedGame) {
-            throw new Error("You have already reviewed this game");
+            return res.status(409).json({message: "You have already reviewed this game"})
         }
         const newReview = new ReviewModel(review)
         user.reviews.push(newReview)

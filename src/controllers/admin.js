@@ -15,7 +15,7 @@ const disabledUser = async(req,res) => {
         const update = {loginAuthorization: false}
         const user = await UserModel.findOne(filter)
         if(!user){
-            throw new Error("user doesn't exist")
+            return res.status(409).json({message: "user doesn't exist"})
         }
         const result = await UserModel.updateOne(filter, update);
         return res.status(200).json({message:"user disabled"})
@@ -31,11 +31,11 @@ const disabledPublication = async(req,res) => {
         const user = await UserModel.findById({_id: idUser})
         const publicationIndex = user.publications.findIndex(element => element.publication._id.toString() === idPub);
         if (publicationIndex === -1) {
-            throw new Error("Publication not found");
+            return res.status(409).json({message: "Publication not found"})
         }
         const publication = await PublicationModel.findOne({_id: idPub})
         if(!publication){
-            throw new Error("publication doesn't exist")
+            return res.status(409).json({message: "publication doesn't exist"})
         }
         user.publications[publicationIndex].publication.active = false
         await PublicationModel.updateOne({_id: idPub}, update);

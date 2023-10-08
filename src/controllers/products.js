@@ -17,13 +17,13 @@ const getAll = async (req, res) => {
 const add = async (req, res) => {
     try {
       if(!req.file){
-        throw new Error("don't found image")
+        return res.status(400).json({message: "don't found image"})
       }
       const {gameName, description, category} = req.body
       const imagenPath = req.file.path
       const searchGame = await ProductModel.findOne({gameName: gameName})
       if(searchGame != null){
-        throw new Error("this game already exists in your products")
+        return res.status(409).json({message: "this game already exists in your products"})
       }
       let urlImage = ""
       await cloudinary.uploader.upload(imagenPath, function(error, result) {
@@ -37,7 +37,7 @@ const add = async (req, res) => {
         if (err) {
           console.error('Error al eliminar el archivo local:', err);
         } else {
-          console.log('Archivo local eliminado con éxito.');
+          //console.log('Archivo local eliminado con éxito.');
         }
       });
       let requestData = {
@@ -60,7 +60,7 @@ const add = async (req, res) => {
       requestData.coverImage = urlImage
       let newProduct =  new ProductModel(requestData)
       newProduct.save()
-      return res.status(201).json({ message:"product created"});  
+      return res.status(201).json({ message:"product created", product: newProduct});  
     } catch (error) {
       return res.status(500).json({message: error.message})
     }
@@ -73,7 +73,7 @@ const addImages = async(req, res) => {
     const uploadedImages = [];
     const product = await ProductModel.findById(id)
     if(!product){
-      throw new Error("this product doesn't exists")
+      return res.status(400).json({message: "this product doesn't exists"})
     }
     const uploadPromises = images.map(async (image) => {
       const imagePath = image.path;
@@ -92,12 +92,12 @@ const addImages = async(req, res) => {
         if (err) {
           throw new Error(err)
         } else {
-          console.log('Archivo local eliminado con éxito.');
+          //console.log('Archivo local eliminado con éxito.');
         }
       });
     }
     if(uploadedImages.length == 0){
-      throw new Error("there isn't anything for push in the product")
+      return res.status(400).json({message: "there isn't anything for push in the product"})
     }
     for (let i = 0; i < uploadedImages.length; i++) {
       product.images.push(uploadedImages[i])
@@ -145,7 +145,7 @@ const set = async(req,res) => {
             if (err) {
               console.error('Error al eliminar el archivo local:', err);
             } else {
-              console.log('Archivo local eliminado con éxito.');
+              //console.log('Archivo local eliminado con éxito.');
             }
           });
         }

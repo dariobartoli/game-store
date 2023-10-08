@@ -13,7 +13,7 @@ const add = async(req,res) => {
             }
         }
         if(hasCreated){
-            throw new Error("This category has already been created")
+            return res.status(409).json({message: 'This category has already been created'})
         }
         let newCategory = new CategoryModel(req.body)
         newCategory.save()

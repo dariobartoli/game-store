@@ -10,7 +10,7 @@ const newMessage = async(req,res) => {
         let profileSender = await UserModel.findById(idUserLogged)
         let isFriend = profileSender.friends.filter((friend) => friend.toString() == receiver)
         if(isFriend.length == 0){
-            throw new Error("this user isn't your friend")
+            return res.status(400).json({message: "this user isn't your friend"})
         }
         let profileReceiver = await UserModel.findById(receiver)
         const existingMessage = await MessageModel.findOne({
@@ -20,11 +20,11 @@ const newMessage = async(req,res) => {
             ],
           });
         if(existingMessage){
-            console.log("ya existia esta conversacion, pusheo");
+            //"ya existia esta conversacion, pusheo"
             existingMessage.historial.push({messageSend: message, sender: idUserLogged})
             await existingMessage.save()
         }else{
-            console.log("cree un nuevo mensaje");
+            //creo un nuevo mensaje
             let newMessage = new MessageModel({sender: idUserLogged, receiver, historial: [{ messageSend: message, sender: idUserLogged}]})
             profileSender.messages.push(newMessage._id);
             profileReceiver.messages.push(newMessage._id);
@@ -55,7 +55,7 @@ const getMessage = async(req,res) => {
         const idMessage = req.params.id
         const messageCache = await redisClient.get(idMessage)
         if(messageCache){
-            console.log("devuelto de cache");
+            //console.log("devuelto de cache");
             return res.status(200).json({messageHistory: JSON.parse(messageCache)})
         }
         const id = req.user.id
@@ -70,7 +70,7 @@ const getMessage = async(req,res) => {
             }
         }
         if(messageHistory == null){
-            throw new Error("message dont fount")
+            return res.status(400).json({message: "message dont fount"})
         }
         const cache = JSON.stringify({
             _id: messageHistory._id,
@@ -79,7 +79,7 @@ const getMessage = async(req,res) => {
             historial: messageHistory.historial,
         })
         redisClient.set(messageHistory._id.valueOf(), cache, {EX: parseInt(process.env.REDIS_TTL)})
-        console.log("devuelto de db");
+        //console.log("devuelto de db");
         return res.status(200).json({messageHistory})
     } catch (error) {
         return res.status(500).json({ message: error.message});

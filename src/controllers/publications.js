@@ -26,7 +26,7 @@ const create = async (req, res) => {
         if (err) {
           throw new Error(err)
         } else {
-          console.log('Archivo local eliminado con éxito.');
+          //console.log('Archivo local eliminado con éxito.');
         }
       });
     }
@@ -89,7 +89,7 @@ const get = async (req, res) => {
     );
     const publications = userProfile.publications;
     if (publications.length == 0) {
-      throw new Error("you don't have publications");
+      return res.status(400).json({message: "you don't have publications"})
     }
     console.log("devuelto de db");
     const cache = JSON.stringify({
@@ -114,7 +114,7 @@ const set = async (req, res) => {
       (element) => element.toString() === id
     );
     if (publicationIndex === -1) {
-      throw new Error("Publication not found");
+      return res.status(400).json({message: "Publication not found"})
     }
     const updatedPublication = await PublicationModel.findOneAndUpdate(
       { _id: id },
@@ -148,7 +148,7 @@ const delet = async (req, res) => {
       (element) => element.toString() === filter
     );
     if (publicationIndex === -1) {
-      throw new Error("Publication not found");
+      return res.status(400).json({message: "Publication not found"})
     }
     await PublicationModel.findByIdAndDelete({ _id: filter });
     return res.status(200).json({ message: "publication deleted" });

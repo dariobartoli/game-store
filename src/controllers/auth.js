@@ -7,6 +7,10 @@ const redisClient = require("../config/redis")
 const register = async (req, res) => {
     try {
         let {firstName, lastName, email, password} = req.body
+        let emailTrue = await UserModel.find({email: email})
+        if(emailTrue.length > 0){
+          return res.status(409).json({message: "this email is already register"})
+        }
         let passwordHashed = await bcrypt.hash(password, 10)
         let newUser = new UserModel({firstName, lastName, email, password: passwordHashed, admin: false, loginAuthorization: true, wallet: 1000})
         const user = await newUser.save()
@@ -14,6 +18,7 @@ const register = async (req, res) => {
         delete sanitizedUser.password;
         return res.status(201).json({ message:"user saved" , sanitizedUser});  
     } catch (error) {
+        console.log(error);
         return res.status(500).json({message: error.message})
     }
 }
@@ -48,7 +53,7 @@ const login = async (req, res) => {
       })//guardamos la informacion del usuario que guardaremos en la cache, redis solo almacena texto
       redisClient.set(user.id.valueOf(), userCache, {EX: parseInt(process.env.REDIS_TTL)})//guardamos la informacion en la cache, con un id(key), la informacion y el tiempo de expiracion
       //usamos valueOf, para sacar solo el id, sino devolveria un object(id)
-      return res.status(200).json({ message: "login successful", token});
+      return res.status(201).json({ message: "login successful", token});
     
     } catch (error) {
       return res.status(500).json({ message: "it has ocurred an error" })

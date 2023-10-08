@@ -10,10 +10,10 @@ const add = async(req,res) => {
         const game = await ProductModel.findById(gameId)
         const gameObjectId = new mongoose.Types.ObjectId(gameId); // Usamos mongoose.Types.ObjectId(gameId) para convertir gameId en un ObjectId.
         if(user.wishlist.some(wishlistGame => wishlistGame.equals(gameObjectId))){//some() para verificar si algún elemento en el array user.games tiene un _id igual a gameId. Esto simplifica la comprobación de si el juego está en la biblioteca del usuario.
-            throw new Error("this game is already in your wishlist")
+            return res.status(409).json({message: "this game is already in your wishlist"})
         }
         if(user.games.some(libraryGame => libraryGame.equals(gameObjectId))){// utilizamos el método equals() para comparar si el ObjectId del juego coincide con algún ObjectId en la lista de deseos o en la biblioteca 
-            throw new Error("this game is already in your library")
+            return res.status(409).json({message: "this game is already in your library"})
         }
         user.wishlist.push(gameId)
         await user.save()
@@ -31,7 +31,7 @@ const remove = async(req,res) => {
         const game = await ProductModel.findById(gameId)
         const gameObjectId = new mongoose.Types.ObjectId(gameId)
         if(!user.wishlist.some(wislistgame => wislistgame.equals(gameObjectId))){
-            throw new Error("this game isn't in your wishlist")
+            return res.status(409).json({message: "this game isn't in your wishlist"})
         }
         user.wishlist = user.wishlist.filter(item => item != gameId)
         user.save()

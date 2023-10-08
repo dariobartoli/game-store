@@ -1,6 +1,6 @@
 const mongoose = require("../config/mongo");
 const bcrypt = require("bcrypt");
-const redisClient = require("../config/redis");
+/* const redisClient = require("../config/redis"); */
 require('dotenv').config();
 
 const userSchema = new mongoose.Schema(
@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema(
     lastName: String,
     email: { type: String, required: true, index: { unique: true } },
     password: {type: String, required: true, select: false},
-    nickName: {type: String, index: {unique: true}},
+    nickName: String,
     profileImage: String,
     wallet: Number,
     publications: [{type: mongoose.Schema.Types.ObjectId, ref: "Publications"}],
@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema(
   user.password = passwordHashed;
   next();
 }); */
-userSchema.post('save', function(doc, next){
+/* userSchema.post('save', function(doc, next){
   const user = JSON.stringify({
     id: doc._id,
     firstName: doc.firstName,
@@ -47,7 +47,7 @@ userSchema.post('save', function(doc, next){
   })
   redisClient.set(doc._id.valueOf(), user, {EX: parseInt(process.env.REDIS_TTL)})
   next();
-})
+}) */
 
 
 
