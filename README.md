@@ -24,8 +24,8 @@ CLOUDINARY_API_SECRET= todos los datos que nos brinda cloudinary en nuestra cuen
 
 NODE_ENV=development // variable que se usa para los test
 
-para instalar las dependencias
+para instalar las dependencias =
 npm install 
 
-correr la app
+correr la app =
 npm run start
