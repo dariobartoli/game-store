@@ -62,14 +62,14 @@ const cleanCart = async(req, res) => {
 const removeToCart = async(req,res) => {
     try {
         const idUser = req.user.id
-        const idGame = req.body.id
-        const gameExists = await ProductModel.findById(idGame)
+        const {id} = req.params
+        const gameExists = await ProductModel.findById(id)
         const user = await UserModel.findById(idUser)
         const cart = await CartModel.findById(user.cart)
         if (!user.cart) {
             return res.status(400).json({message: "you don't have anything in your cart"})
         }
-        cart.gamesInCart = cart.gamesInCart.filter((game) => game._id.toString() != idGame)
+        cart.gamesInCart = cart.gamesInCart.filter((game) => game._id.toString() != id)
         if(cart.gamesInCart.length == 0){
             user.cart = undefined;
         }
@@ -85,7 +85,7 @@ const getCart = async(req,res) => {
         const idUser = req.user.id
         const user = await UserModel.findById(idUser)
         if(!user.cart){
-            return res.status(400).json({message: "you don't have anything in your cart"})
+            return res.status(200).json({message: "you don't have anything in your cart"})
         }
         const cartUser = await CartModel.findById(user.cart.valueOf()).populate("gamesInCart.game")
         return res.status(200).json({message: "your cart", cartUser})

@@ -4,8 +4,9 @@ const reviewController = require('../controllers/reviews')
 const reviewMiddleware = require('../middlewares/reviews')
 const tokenAuth = require('../middlewares/tokenAuth')
 
-router.use(tokenAuth.userVerify)
 
+router.get('/:id', reviewController.getAll)
+router.use(tokenAuth.userVerify)
 router.post('/', reviewMiddleware.dataValidation, reviewController.add)
 router.get('/', reviewController.get)
 router.delete('/', reviewController.remove)

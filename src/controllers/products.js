@@ -19,7 +19,7 @@ const add = async (req, res) => {
       if(!req.file){
         return res.status(400).json({message: "don't found image"})
       }
-      const {gameName, description, category} = req.body
+      const {gameName, description, category, developer, publisher} = req.body
       const imagenPath = req.file.path
       const searchGame = await ProductModel.findOne({gameName: gameName})
       if(searchGame != null){
@@ -44,6 +44,8 @@ const add = async (req, res) => {
         gameName,
         description,
         coverImage: "",
+        developer,
+        publisher,
         variant: [],
         category
       }
@@ -123,7 +125,7 @@ const set = async(req,res) => {
     try {
         const {id} = req.params
         const imagen = req.file
-        const {gameName, description, category} = req.body
+        const {gameName, description, category, developer, publisher} = req.body
         let variant = []
         for (let i = 0; req.body[`variant[${i}].edition`]; i++) {
           variant.push({
@@ -158,6 +160,12 @@ const set = async(req,res) => {
         }
         if(category){
           updateFields.category = category
+        }
+        if(developer){
+          updateFields.developer = developer
+        }
+        if(publisher){
+          updateFields.publisher = publisher
         }
         if(variant.length > 0){
           updateFields.variant = variant

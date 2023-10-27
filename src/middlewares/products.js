@@ -7,12 +7,14 @@ const productLogger = (req, res, next) => {
 
 const dataValidation = (req, res, next) => {
   const schema = Joi.object({
-    gameName: Joi.string().min(3).max(30).required(),
+    gameName: Joi.string().min(3).max(60).required(),
     description: Joi.string().min(1).max(500).required(),
     category: Joi.alternatives().try(
       Joi.array().items(Joi.string().alphanum()).required(),
       Joi.string().alphanum().required()
     ),
+    developer: Joi.string().required(),
+    publisher: Joi.string().required(),
     'variant[0].edition': Joi.string().required(),
     'variant[0].price': Joi.number().positive().required(),
     'variant[1].edition': Joi.string(),

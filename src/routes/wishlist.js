@@ -7,6 +7,6 @@ router.use(tokenAuth.userVerify)
 
 router.get('/', wishlistController.get)
 router.post('/', wishlistController.add)
-router.delete('/', wishlistController.remove)
+router.delete('/:id', wishlistController.remove)
 
 module.exports = router

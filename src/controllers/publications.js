@@ -5,6 +5,8 @@ require("dotenv").config();
 const cloudinary = require("../config/cloudinary");
 const fs = require("fs");
 
+
+
 const create = async (req, res) => {
   try {
     const { title, text } = req.body;
@@ -81,17 +83,20 @@ const get = async (req, res) => {
     const idCache = req.user.id.concat("publication");
     const publicationCache = await redisClient.get(idCache);
     if (publicationCache) {
-      console.log("devuelto de cache");
+      //console.log("devuelto de cache");
       return res.status(200).json(JSON.parse(publicationCache));
     }
-    const userProfile = await UserModel.findById(req.user.id).populate(
-      "publications"
-    );
+    const userProfile = await UserModel.findById(req.user.id).populate("publications");
     const publications = userProfile.publications;
     if (publications.length == 0) {
       return res.status(400).json({message: "you don't have publications"})
     }
-    console.log("devuelto de db");
+    //console.log("devuelto de db");
+
+    // Realiza la operación de populate en las publicaciones para llenar los usuarios que comentan
+    const populatedPublications = await PublicationModel
+    .find({ _id: { $in: publications.map(p => p._id) } })
+    .populate("comments.user");
     const cache = JSON.stringify({
       publications,
     });

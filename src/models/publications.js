@@ -17,6 +17,7 @@ const publicationSchema = new mongoose.Schema({
   }, {timestamps: true});
 
 
+
   publicationSchema.set("toJSON", {
     transform: function (doc, ret) {
       delete ret.__v;
@@ -28,6 +29,19 @@ const publicationSchema = new mongoose.Schema({
         delete ret.user.loginAuthorization;
         delete ret.user.publications;
       }
+/*       if (ret.comments) {
+        delete ret.comments.user.firstName;
+        delete ret.comments.user.lastName;
+        delete ret.comments.user.wallet;
+        delete ret.comments.user.publications;
+        delete ret.comments.user.messages;
+        delete ret.comments.user.friends;
+        delete ret.comments.user.wishlist;
+        delete ret.comments.user.friendsRequest;
+        delete ret.comments.user.admin;
+        delete ret.comments.user.loginAuthorization;
+        delete ret.comments.user.reviews;
+      } */
     },
   });
   

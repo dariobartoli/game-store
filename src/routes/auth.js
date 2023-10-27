@@ -8,7 +8,7 @@ router.post('/register', usersMiddleware.dataValidation, authController.register
 router.post('/login', authController.login)
 
 router.use(tokenAuth.userVerify)
-router.post('/logout', authController.logout)
+router.delete('/logout', authController.logout)
 
 module.exports = router
 

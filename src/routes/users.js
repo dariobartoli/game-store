@@ -10,6 +10,7 @@ router.get('/all', usersController.getAll)
 
 router.use(tokenAuth.userVerify)
 router.get('/', usersController.get)
+router.get('/user/:id', usersController.getOneUser)
 router.put('/', multerMiddleware.upload, usersController.set)
 router.post('/user/add', usersController.addFriend)
 router.post('/user/response', usersController.responseRequest)

@@ -26,14 +26,14 @@ const add = async(req,res) => {
 const remove = async(req,res) => {
     try {
         const userId = req.user.id
-        const gameId = req.body.id
+        const {id} = req.params
         const user = await UserModel.findById(userId)
-        const game = await ProductModel.findById(gameId)
-        const gameObjectId = new mongoose.Types.ObjectId(gameId)
+        const game = await ProductModel.findById(id)
+        const gameObjectId = new mongoose.Types.ObjectId(id)
         if(!user.wishlist.some(wislistgame => wislistgame.equals(gameObjectId))){
             return res.status(409).json({message: "this game isn't in your wishlist"})
         }
-        user.wishlist = user.wishlist.filter(item => item != gameId)
+        user.wishlist = user.wishlist.filter(item => item != id)
         user.save()
         return res.status(200).json({message: "game removed to wishlist"})
     } catch (error) {

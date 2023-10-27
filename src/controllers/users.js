@@ -40,6 +40,16 @@ const get = async (req, res) => {
   }
 };
 
+const getOneUser = async(req,res) => {
+  try {
+    const {id} = req.params
+    let user =  await UserModel.findById(id)
+    return res.status(200).json({message:"user", user: user})
+  } catch (error) {
+    return res.status(500).json({message: error.message})
+  }
+}
+
 const set = async (req, res) => {
   try {
     const id = req.user.id;
@@ -184,4 +194,4 @@ const removeFriend = async (req, res) => {
   }
 };
 
-module.exports = { getAll, get, set, addFriend, responseRequest, removeFriend };
+module.exports = { getAll, get, set, addFriend, responseRequest, removeFriend, getOneUser };

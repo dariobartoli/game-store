@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 require('dotenv').config();
 const redisClient = require("../config/redis")
+const { faker } = require('@faker-js/faker');
 
 const register = async (req, res) => {
     try {
@@ -12,7 +13,7 @@ const register = async (req, res) => {
           return res.status(409).json({message: "this email is already register"})
         }
         let passwordHashed = await bcrypt.hash(password, 10)
-        let newUser = new UserModel({firstName, lastName, email, password: passwordHashed, admin: false, loginAuthorization: true, wallet: 1000})
+        let newUser = new UserModel({firstName, lastName, email, password: passwordHashed, admin: false, loginAuthorization: true, wallet: 1000, profileImage: 'https://i.ibb.co/gPdnx88/blank-profile-picture-973460-960-720.webp', nickName: faker.internet.userName()})
         const user = await newUser.save()
         const sanitizedUser = { ...user._doc }; //creamos una copia del usuario y eliminamos la pass al json que queremos mostrar
         delete sanitizedUser.password;
@@ -31,7 +32,7 @@ const login = async (req, res) => {
           {email: emailOrNick},
           {nickName: emailOrNick}
         ]
-      }).select('_id email password admin loginAuthorization firstName lastName publications')
+      }).select('_id email password admin loginAuthorization firstName lastName publications profileImage messages wishlist')
       if(!user) return res.status(401).json({ message: "user doesn't exist"});
       if(!user.loginAuthorization){
         return res.status(403).json({message: "invalid access"})
@@ -49,7 +50,9 @@ const login = async (req, res) => {
         lastName: user.lastName,
         email: user.email,
         publications: user.publications,
-        messages: user.messages
+        messages: user.messages,
+        profileImage: user.profileImage,
+        wishlist: user.wishlist
       })//guardamos la informacion del usuario que guardaremos en la cache, redis solo almacena texto
       redisClient.set(user.id.valueOf(), userCache, {EX: parseInt(process.env.REDIS_TTL)})//guardamos la informacion en la cache, con un id(key), la informacion y el tiempo de expiracion
       //usamos valueOf, para sacar solo el id, sino devolveria un object(id)

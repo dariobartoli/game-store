@@ -12,7 +12,9 @@ const add = async(req,res) => {
         const review = {
             idGame: game._id,
             text,
-            recommended
+            recommended,
+            nick: user.nickName,
+            image: user.profileImage,
         }
         if(!user.games.some(item => item.equals(gameObjectId))){
             return res.status(409).json({message: "you haven't this game"})
@@ -41,6 +43,17 @@ const get = async(req,res) => {
     }
 }
 
+const getAll = async(req, res) => {
+    try {
+        const {id} = req.params
+        const game = await ProductModel.findById(id).populate("reviews")
+        const reviews = game.reviews
+        return res.status(200).json({message: "reviews", reviews})
+    } catch (error) {
+        return res.status(500).json({message: error.message})
+    }
+}
+
 const remove = async(req, res) => {
     try {
         const id = req.body.id
@@ -57,4 +70,4 @@ const remove = async(req, res) => {
     }
 }
 
-module.exports = {add, get, remove}
+module.exports = {add, get, remove, getAll}
