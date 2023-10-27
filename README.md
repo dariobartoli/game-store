@@ -1,4 +1,5 @@
 # game-store
+
 crear un archivo .env en la carpeta raiz
 agregar las siguientes variables de entorno
 PORT=puerto donde correra la app
