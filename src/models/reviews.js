@@ -5,8 +5,7 @@ const reviewSchema = new mongoose.Schema(
     idGame: String,
     text: String,
     recommended: Boolean,
-    nick: String,
-    image: String,
+    userId: String,
   },
   { timestamps: true }
 );

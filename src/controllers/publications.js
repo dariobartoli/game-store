@@ -44,6 +44,7 @@ const create = async (req, res) => {
       title,
       text,
       active: true,
+      show: false,
       user: req.user.id,
       images: imagesUpload,
       likes: [],
@@ -147,15 +148,15 @@ const set = async (req, res) => {
 
 const delet = async (req, res) => {
   try {
-    const filter = req.body.id;
+    const {id} = req.params;
     const userLogged = await UserModel.findById({ _id: req.user.id });
     const publicationIndex = userLogged.publications.findIndex(
-      (element) => element.toString() === filter
+      (element) => element.toString() === id
     );
     if (publicationIndex === -1) {
       return res.status(400).json({message: "Publication not found"})
     }
-    await PublicationModel.findByIdAndDelete({ _id: filter });
+    await PublicationModel.findByIdAndDelete({ _id: id});
     return res.status(200).json({ message: "publication deleted" });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -167,10 +168,13 @@ const addLike = async(req, res) => {
     const publication = await PublicationModel.findById(req.body.id)
     const liked = publication.likes.some(item => item.toString() == req.user.id)
     if(liked){
-      return res.status(403).json({message: "you have already liked this publication"})
+      const updatedLikes = publication.likes.filter(item => item.toString() != req.user.id)
+      publication.likes = updatedLikes;
+      await publication.save()
+      return res.status(201).json({message: "disliked"})
     }
     publication.likes.push(req.user.id)
-    publication.save()
+    await publication.save()
     return res.status(201).json({ message: "liked" });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -194,4 +198,54 @@ const addComment = async(req,res) => {
   }
 }
 
-module.exports = { create, getAll, set, delet, get, addLike, addComment};
+const setShow = async(req,res) => {
+  try {
+    const idPublication = req.body.id;
+    const publication = await PublicationModel.findById(idPublication);
+    if (!publication) {
+      return res.status(404).json({ message: "Publication doesn't found" });
+    }
+    publication.show = !publication.show;
+    await publication.save();
+    return res.status(200).json({ message: "show change", updatedShowValue: publication.show });
+  } catch (error) {
+    return res.status(500).json({message: error.message})
+  }
+}
+
+const getOnePublication = async(req,res) => {
+  try {
+    const {id} = req.params
+    const publication = await PublicationModel.findById(id)
+    if(!publication) {
+      return res.status(404).json({ message: "Publication doesn't found" });
+    }
+    
+  } catch (error) {
+    return res.status(500).json({message: error.message})
+  }
+}
+
+const deletComment = async(req,res) => {
+  try {
+    const {publicationId, commentId} = req.body
+    const userLogged = await UserModel.findById({ _id: req.user.id });
+    const publication = await PublicationModel.findById(publicationId)
+    const comment = publication.comments.find(item => item._id.valueOf() === commentId)
+    if(!comment){
+      return res.status(403).json({ message: "comment don't found"});
+    }
+    const commentUser = publication.comments.find(item => item.user.valueOf() === userLogged._id.valueOf() && item._id.valueOf() === commentId);
+    if(!commentUser){
+      return res.status(403).json({ message: "comment don't found for the user"});
+    }
+    const updatePublication = publication.comments.filter(item => item._id.valueOf() != commentId)
+    publication.comments = updatePublication
+    await publication.save()
+    return res.status(200).json({ message: "comment deleted"});
+  } catch (error) {
+    return res.status(500).json({message: error.message})
+  }
+}
+
+module.exports = { create, getAll, set, delet, get, addLike, addComment, setShow, getOnePublication, deletComment};

@@ -4,6 +4,7 @@ const publicationSchema = new mongoose.Schema({
     title: String,
     text: String,
     active: Boolean,
+    show: Boolean,
     images: Array,
     user: {
       type: mongoose.Schema.Types.ObjectId,
@@ -21,7 +22,6 @@ const publicationSchema = new mongoose.Schema({
   publicationSchema.set("toJSON", {
     transform: function (doc, ret) {
       delete ret.__v;
-      delete ret.createdAt;
       delete ret.updatedAt;
       if (ret.user) {
         delete ret.user._id;

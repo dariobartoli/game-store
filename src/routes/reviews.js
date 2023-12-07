@@ -9,6 +9,6 @@ router.get('/:id', reviewController.getAll)
 router.use(tokenAuth.userVerify)
 router.post('/', reviewMiddleware.dataValidation, reviewController.add)
 router.get('/', reviewController.get)
-router.delete('/', reviewController.remove)
+router.delete('/:id', reviewController.remove)
 
 module.exports = router

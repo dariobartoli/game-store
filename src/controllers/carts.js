@@ -96,6 +96,7 @@ const getCart = async(req,res) => {
 
 const purchase = async(req,res) => {
     try {
+        console.log("hola");
         const userId = req.user.id
         const user = await UserModel.findById(userId)
         if (!user.cart) {

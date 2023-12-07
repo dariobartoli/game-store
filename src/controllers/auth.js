@@ -32,7 +32,7 @@ const login = async (req, res) => {
           {email: emailOrNick},
           {nickName: emailOrNick}
         ]
-      }).select('_id email password admin loginAuthorization firstName lastName publications profileImage messages wishlist')
+      }).select('_id email password admin loginAuthorization firstName lastName publications profileImage messages wishlist nickName wallet friends games reviews friendsRequest')
       if(!user) return res.status(401).json({ message: "user doesn't exist"});
       if(!user.loginAuthorization){
         return res.status(403).json({message: "invalid access"})
@@ -52,11 +52,17 @@ const login = async (req, res) => {
         publications: user.publications,
         messages: user.messages,
         profileImage: user.profileImage,
-        wishlist: user.wishlist
+        wishlist: user.wishlist,
+        nickName: user.nickName,
+        wallet: user.wallet,
+        friends: user.friends,
+        games: user.games,
+        reviews: user.reviews,
+        friendRequest: user.friendsRequest,
       })//guardamos la informacion del usuario que guardaremos en la cache, redis solo almacena texto
       redisClient.set(user.id.valueOf(), userCache, {EX: parseInt(process.env.REDIS_TTL)})//guardamos la informacion en la cache, con un id(key), la informacion y el tiempo de expiracion
       //usamos valueOf, para sacar solo el id, sino devolveria un object(id)
-      return res.status(201).json({ message: "login successful", token});
+      return res.status(201).json({ message: "login successful", token, userId: user._id});
     
     } catch (error) {
       return res.status(500).json({ message: "it has ocurred an error" })

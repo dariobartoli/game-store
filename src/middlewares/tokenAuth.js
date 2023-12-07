@@ -6,7 +6,7 @@ const redisClient = require("../config/redis")
 const userVerify = async (req, res, next) => {
   try {
     const bearerToken = req.header("authorization"); // trae el bearer token que pasamos en la autorizacion
-    if (!bearerToken) return res.status(401).json({ message: "invalid data" });
+    if (!bearerToken) return res.status(401).json({ message: "invalid token" });
     const token = bearerToken.split(" ")[1]; //dividir el array, y tomar la posicion uno que es la del token
     const user = await dataFromToken(token);
     if (!user.id) return res.status(401).json({ message: "sesion expired" });

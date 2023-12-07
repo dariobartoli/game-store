@@ -1,6 +1,7 @@
 const ProductModel = require("../models/products");
 const cloudinary = require('../config/cloudinary');
 const fs = require('fs'); //fyle sistem es el módulo de Node.js que proporciona funciones para interactuar con el sistema de archivos, como leer archivos, escribir archivos, crear directorios, eliminar archivos y más. Es una parte fundamental de la manipulación de archivos en aplicaciones Node.js.
+const UserModel = require("../models/users");
 
 const getAll = async (req, res) => {
   try {
@@ -191,4 +192,15 @@ const get = async(req,res) => {
     }
 }
 
-module.exports = { getAll, add, del, set, get, addImages};
+const userProducts = async(req,res) => {
+  try {
+    const {id} = req.params
+    const user = await UserModel.findById(id).populate('games')
+    const library = user.games
+    return res.status(200).json({message:"your games", library})
+  } catch (error) {
+    return res.status(500).json({message: "it has ocurred an error", error: error}) 
+  }
+}
+
+module.exports = { getAll, add, del, set, get, addImages, userProducts};

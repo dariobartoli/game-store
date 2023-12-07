@@ -147,7 +147,7 @@ const responseRequest = async (req, res) => {
       (request) => request.toString() == id
     );
     if (exists.length == 0) {
-      return res.status(409).json({message: "request dont found"})
+      return res.status(409).json({message: "request don't found"})
     }
     if (response) {
       user.friends.push(userFriend);
@@ -172,13 +172,13 @@ const responseRequest = async (req, res) => {
 const removeFriend = async (req, res) => {
   try {
     const userId = req.user.id;
-    const idUserRemove = req.body.id;
+    const {id} = req.params;
     const user = await UserModel.findById(userId);
-    const userRemove = await UserModel.findById(idUserRemove);
+    const userRemove = await UserModel.findById(id);
     user.friends.map((friend) => {
-      if (friend.valueOf() == idUserRemove) {
+      if (friend.valueOf() == id) {
         user.friends = user.friends.filter(
-          (friend) => friend.toString() != idUserRemove
+          (friend) => friend.toString() != id
         );
         userRemove.friends = userRemove.friends.filter(
           (friend) => friend.toString() != userId

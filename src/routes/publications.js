@@ -11,11 +11,14 @@ router.get("/all", publicationController.getAll);
 router.use(tokenAuth.userVerify);
 
 router.get("/", publicationController.get)
-router.post("/", multerMiddleware.uploadMulti, publicationController.create);
+router.get("/:id", publicationController.getOnePublication)
+router.post("/", multerMiddleware.uploadMulti, publicationMiddleware.dataValidation, publicationController.create);
 router.put("/", publicationController.set);
-router.delete("/", publicationController.delet);
+router.put("/show", publicationController.setShow)
+router.delete("/:id", publicationController.delet);
 router.post('/like', publicationController.addLike)
 router.post('/comment', publicationMiddleware.commentValidation, publicationController.addComment)
+router.put('/comment/remove', publicationController.deletComment)
 
 
 module.exports = router;

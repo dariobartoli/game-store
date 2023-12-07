@@ -14,7 +14,7 @@ const upload = multer({
     fileSize: 3000000, //limitamos el tamaño de la imagen 3mb
   },
   fileFilter: (req, file, cb) => {
-    const fileTypes = /jpeg|jpg|png/;
+    const fileTypes = /jpeg|jpg|png|webp/;
     const mimetype = fileTypes.test(file.mimetype); //comprobamos si coincide la extension
     const extName = fileTypes.test(path.extname(file.originalname)); // sacar la extension del nombre del archivo y comprobar
     if (mimetype && extName) {
@@ -30,7 +30,7 @@ const uploadMulti = multer({
     fileSize: 3000000, // Limitamos el tamaño de cada imagen a 3MB
   },
   fileFilter: (req, file, cb) => {
-    const fileTypes = /jpeg|jpg|png/;
+    const fileTypes = /jpeg|jpg|png|webp/;
     const mimetype = fileTypes.test(file.mimetype); // Comprobamos si coincide la extensión
     const extName = fileTypes.test(path.extname(file.originalname)); // Sacamos la extensión del nombre del archivo y comprobamos
     if (mimetype && extName) {

@@ -13,8 +13,7 @@ const add = async(req,res) => {
             idGame: game._id,
             text,
             recommended,
-            nick: user.nickName,
-            image: user.profileImage,
+            userId: user._id,
         }
         if(!user.games.some(item => item.equals(gameObjectId))){
             return res.status(409).json({message: "you haven't this game"})
@@ -56,7 +55,7 @@ const getAll = async(req, res) => {
 
 const remove = async(req, res) => {
     try {
-        const id = req.body.id
+        const {id} = req.params
         const review = await ReviewModel.findById(id)
         const user = await UserModel.findById(req.user.id)
         const product = await ProductModel.findById(review.idGame)

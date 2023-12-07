@@ -4,6 +4,10 @@ const dataValidation = (req, res, next) => {
   const schema = Joi.object({
     title: Joi.string().min(3).max(30).required(),
     text: Joi.string().min(10).required(),
+    images: Joi.array() // Definimos un arreglo para las imágenes
+      .min(1) // Al menos una imagen es requerida
+      .max(1)
+      .items(Joi.string()), // Cada elemento del arreglo debe ser una cadena (puedes ajustar esto según tus necesidades)
   });
   const validationResult = schema.validate(req.body);
   if (validationResult.error) {
