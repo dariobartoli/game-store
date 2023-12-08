@@ -1,8 +1,11 @@
 require('dotenv').config()
 const express = require('express')
 const app = express()
+
 app.use(express.json())
 const cors = require('cors');
+app.use(cors());
+
 
 const productsRouter = require('./routes/products');
 const usersRouter = require('./routes/users');
@@ -14,7 +17,7 @@ const messagesRouter = require('./routes/messages');
 const cartRouter = require('./routes/carts');
 const wishlistRouter = require('./routes/wishlist');
 const reviewRouter = require('./routes/reviews');
-app.use(cors());
+
 app.use('/products', productsRouter);
 app.use('/users', usersRouter);
 app.use('/categories', categoriesRouter);
