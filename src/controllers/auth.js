@@ -32,8 +32,9 @@ const login = async (req, res) => {
           {email: emailOrNick},
           {nickName: emailOrNick}
         ]
-      }).select('_id email password admin loginAuthorization firstName lastName publications profileImage messages wishlist nickName wallet friends games reviews friendsRequest')
-      if(!user) return res.status(401).json({ message: "user doesn't exist"});
+      }).select('_id email password admin loginAuthorization firstName lastName publications profileImage messages wishlist nickName wallet friends games reviews friendsRequest background description cart')
+      console.log(user);
+      if(user == null) return res.status(401).json({ message: "user doesn't exist"});
       if(!user.loginAuthorization){
         return res.status(403).json({message: "invalid access"})
       }
@@ -43,7 +44,7 @@ const login = async (req, res) => {
   
       const token = jwt.sign(
         { email: user.email, id: user._id, admin: user.admin, authorization: user.loginAuthorization},
-        process.env.TOKEN_SIGNATURE, {expiresIn: '10m'})
+        process.env.TOKEN_SIGNATURE, {expiresIn: '60m'})
       const userCache = JSON.stringify({
         id: user._id,
         firstName: user.firstName,
@@ -59,6 +60,9 @@ const login = async (req, res) => {
         games: user.games,
         reviews: user.reviews,
         friendRequest: user.friendsRequest,
+        background: user.background,
+        description: user.description,
+        cart: user.cart
       })//guardamos la informacion del usuario que guardaremos en la cache, redis solo almacena texto
       redisClient.set(user.id.valueOf(), userCache, {EX: parseInt(process.env.REDIS_TTL)})//guardamos la informacion en la cache, con un id(key), la informacion y el tiempo de expiracion
       //usamos valueOf, para sacar solo el id, sino devolveria un object(id)

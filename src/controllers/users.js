@@ -27,7 +27,7 @@ const get = async (req, res) => {
     }
     console.log("devuelto de bd");
     let user = await UserModel.findOne({ _id: req.user.id })
-      .select("_id email firstName lastName publications messages cart")
+      .select("_id email firstName lastName publications profileImage messages wishlist nickName wallet friends games reviews friendsRequest background description cart")
       .populate("cart");
     redisClient.set(req.user.id.valueOf(), JSON.stringify(user), {
       EX: parseInt(process.env.REDIS_TTL),
@@ -54,18 +54,20 @@ const set = async (req, res) => {
   try {
     const id = req.user.id;
     const image = req.file;
-    const { firstName, lastName, password, nickName } = req.body;
+    const { firstName, lastName, password, nickName, description } = req.body;
     const users = await UserModel.find();
-    const filterNick = users.some((item) => {
-      // Verifica si item.nickName está definido y es una cadena
-      if (item.nickName && typeof item.nickName === "string") {
-        return item.nickName.toLowerCase() === nickName.toLowerCase();
+    if(nickName != undefined){
+      const filterNick = users.some((item) => {
+        // Verifica si item.nickName está definido y es una cadena
+        if (item.nickName && typeof item.nickName === "string") {
+          return item.nickName.toLowerCase() === nickName.toLowerCase();
+        }
+        // Si item.nickName no está definido o no es una cadena, no realiza la comparación
+        return false;
+      });
+      if (filterNick) {
+        return res.status(409).json({message: "this nickname is already in use"})
       }
-      // Si item.nickName no está definido o no es una cadena, no realiza la comparación
-      return false;
-    });
-    if (filterNick) {
-      return res.status(409).json({message: "this nickname is already in use"})
     }
     let urlImage = "";
     if (image) {
@@ -102,7 +104,13 @@ const set = async (req, res) => {
     if (urlImage) {
       updateFields.profileImage = urlImage;
     }
-    user = await UserModel.findByIdAndUpdate(id, updateFields, { new: true });
+    if (description) {
+      updateFields.description = description;
+    }
+    const user = await UserModel.findByIdAndUpdate(id, updateFields, { new: true });
+    redisClient.set(req.user.id.valueOf(), JSON.stringify(user), {
+      EX: parseInt(process.env.REDIS_TTL),
+    }); //actualizamos la cache
     return res.status(200).json({ message: "user modify", user });
   } catch (error) {
     return res.status(500).json({ message: error.message });

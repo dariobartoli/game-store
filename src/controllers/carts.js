@@ -1,6 +1,8 @@
 const CartModel = require('../models/carts')
 const ProductModel = require('../models/products')
 const UserModel = require('../models/users')
+const redisClient = require("../config/redis")
+
 
 const addToCart = async(req,res) => {
     try {
@@ -119,15 +121,19 @@ const purchase = async(req,res) => {
         user.wishlist = user.wishlist.filter(wishlistGameId => {
             return !cart.gamesInCart.some(cartGame => wishlistGameId.equals(cartGame.game));
         }); //Utilizamos cart.gamesInCart.some() para verificar si un juego en la lista de deseos (user.wishlist) está en el carrito de compra (cart.gamesInCart)
-
-        user.wallet = user.wallet.toFixed(2) - total.toFixed(2)
+        const resto = user.wallet.toFixed(2) - total.toFixed(2)
+        const restoFixed = resto.toFixed(2)
+        user.wallet = restoFixed
         for (const item of cart.gamesInCart) {
             user.games.push(item.game)
         }
         await CartModel.findByIdAndRemove(user.cart);
         user.cart = undefined;
         await user.save();
-        return res.status(200).json({message: "purchase successful"})
+        redisClient.set(req.user.id.valueOf(), JSON.stringify(user), {
+            EX: parseInt(process.env.REDIS_TTL),
+        }); //actualizar la cache del usuario
+        return res.status(200).json({message: "purchase successful", total})
     } catch (error) {
         return res.status(500).json({message: error.message})
     }

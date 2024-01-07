@@ -58,7 +58,7 @@ const create = async (req, res) => {
     userLogger.publications.push(publication._id);
     Promise.all([publication.save(), userLogger.save()]);
     return res.status(201).json({
-      message: "publication has been created successful",
+      message: "publication sent to moderator, please wait",
       publication,
     });
   } catch (error) {
@@ -192,7 +192,7 @@ const addComment = async(req,res) => {
     }
     publication.comments.push(commentAdd)
     publication.save()
-    return res.status(201).json({message:"comment added successful"})
+    return res.status(201).json({message:"comment sent to moderator, please wait"})
   } catch (error) {
     return res.status(500).json({message: error.message})
   }

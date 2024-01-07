@@ -13,8 +13,10 @@ const publicationSchema = new mongoose.Schema({
     likes: [{type: mongoose.Schema.Types.ObjectId, ref: "Users"}],
     comments: [{
       text: String,
+      aprobado: {type:Boolean, default: false},
       user: {type: mongoose.Schema.Types.ObjectId, ref: "Users"}
     }],
+    aprobado: {type: Boolean, default: false}
   }, {timestamps: true});
 
 

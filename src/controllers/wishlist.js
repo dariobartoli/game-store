@@ -1,6 +1,8 @@
 const UserModel = require('../models/users')
 const ProductModel = require(`../models/products`)
 const mongoose = require('../config/mongo')
+const redisClient = require("../config/redis")
+
 
 const add = async(req,res) => {
     try {
@@ -16,6 +18,9 @@ const add = async(req,res) => {
             return res.status(409).json({message: "this game is already in your library"})
         }
         user.wishlist.push(gameId)
+        redisClient.set(req.user.id.valueOf(), JSON.stringify(user), {
+            EX: parseInt(process.env.REDIS_TTL),
+        }); //actualizar la cache del usuario
         await user.save()
         return res.status(201).json({message: "game add to wishlist"})
     } catch (error) {
@@ -34,6 +39,9 @@ const remove = async(req,res) => {
             return res.status(409).json({message: "this game isn't in your wishlist"})
         }
         user.wishlist = user.wishlist.filter(item => item != id)
+        redisClient.set(req.user.id.valueOf(), JSON.stringify(user), {
+            EX: parseInt(process.env.REDIS_TTL),
+        }); //actualizar la cache del usuario
         user.save()
         return res.status(200).json({message: "game removed to wishlist"})
     } catch (error) {

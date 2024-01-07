@@ -26,7 +26,7 @@ const add = async(req,res) => {
         user.reviews.push(newReview)
         game.reviews.push(newReview)
         await Promise.all([newReview.save(), user.save(), game.save()])
-    return res.status(201).json({message: "review created", newReview})   
+    return res.status(201).json({message: "review sent to moderator, please wait", newReview})   
     } catch (error) {
         return res.status(500).json({message: error.message})
     }

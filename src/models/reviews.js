@@ -6,6 +6,7 @@ const reviewSchema = new mongoose.Schema(
     text: String,
     recommended: Boolean,
     userId: String,
+    aprobado: {type: Boolean, default: false}
   },
   { timestamps: true }
 );

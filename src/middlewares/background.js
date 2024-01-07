@@ -2,14 +2,10 @@ const Joi = require('joi');
 
 const dataValidation = (req, res, next) => {
     const schema = Joi.object({
-        id: Joi.string()
-            .alphanum()
+        url: Joi.string()
             .required(),
-        text: Joi.string()
-            .min(10)
-            .max(2000)
+        name: Joi.string()
             .required(),
-        recommended: Joi.boolean().required(),
     })
     const validationResult = schema.validate(req.body)
     if (validationResult.error) {

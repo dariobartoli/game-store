@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema(
     nickName: String,
     profileImage: String,
     wallet: Number,
+    description: String,
     publications: [{type: mongoose.Schema.Types.ObjectId, ref: "Publications"}],
     messages: [{type: mongoose.Schema.Types.ObjectId, ref: "Messages"}],
     friends: [{type: mongoose.Schema.Types.ObjectId, ref: "Users"}],
@@ -25,6 +26,7 @@ const userSchema = new mongoose.Schema(
     friendsRequest: Array,
     admin: Boolean,
     loginAuthorization: Boolean,
+    background: {type: String, default: "nada"},
   },
   { timestamps: true }
 );

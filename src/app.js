@@ -17,6 +17,7 @@ const messagesRouter = require('./routes/messages');
 const cartRouter = require('./routes/carts');
 const wishlistRouter = require('./routes/wishlist');
 const reviewRouter = require('./routes/reviews');
+const backgroundRouter = require('./routes/background');
 
 app.use('/products', productsRouter);
 app.use('/users', usersRouter);
@@ -28,6 +29,7 @@ app.use('/messages', messagesRouter);
 app.use('/carts', cartRouter);
 app.use('/wishlist', wishlistRouter);
 app.use('/reviews', reviewRouter);
+app.use('/background', backgroundRouter);
 
 
 module.exports = app
