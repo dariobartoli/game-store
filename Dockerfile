@@ -1,5 +1,5 @@
 FROM node:18
-ENV PORT=5353
+ENV PORT=8080
 ENV TOKEN_SIGNATURE=tokenPass
 ENV SALT=10
 ENV REDIS_TTL=1000
@@ -8,5 +8,5 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 COPY . .
 RUN npm install
-EXPOSE 1500
+EXPOSE 8080
 CMD [ "node", "src/index.js"]
