@@ -33,7 +33,6 @@ const login = async (req, res) => {
           {nickName: emailOrNick}
         ]
       }).select('_id email password admin loginAuthorization firstName lastName publications profileImage messages wishlist nickName wallet friends games reviews friendsRequest background description cart')
-      console.log(user);
       if(user == null) return res.status(401).json({ message: "user doesn't exist"});
       if(!user.loginAuthorization){
         return res.status(403).json({message: "invalid access"})
