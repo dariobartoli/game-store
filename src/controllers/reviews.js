@@ -61,7 +61,7 @@ const remove = async(req, res) => {
         const product = await ProductModel.findById(review.idGame)
         user.reviews = user.reviews.filter(item =>  item != id)
         product.reviews = product.reviews.filter(item => item != id)
-        await ReviewModel.findByIdAndRemove(id)
+        await ReviewModel.findByIdAndDelete(id)
         await Promise.all([user.save(), product.save()])
         return res.status(200).json({message: "review removed"})
     } catch (error) {

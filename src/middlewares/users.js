@@ -17,15 +17,12 @@ const dataValidation = (req, res, next) => {
             .required(),
         
         password: Joi.string()
-            .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$'))
+            .min(6)
             .required(),
         email: Joi.string()
             .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
             .max(50)
             .required(),
-        description: Joi.string()
-            .min(3)
-            .max(250)
     })
     const validationResult = schema.validate(req.body)
     if (validationResult.error) {
@@ -45,7 +42,6 @@ const dataUpdate= (req, res, next) => {
         lastName: Joi.string()
             .min(3)
             .max(30),
-        
         password: Joi.string()
             .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
         email: Joi.string()

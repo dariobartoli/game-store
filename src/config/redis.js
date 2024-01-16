@@ -9,7 +9,7 @@ let redisClient;
     console.error(`Error al conectar a Redis: ${error.message}`);
     console.error(error.stack);
   });
-  await redisClient.connect();
+  await redisClient.connect(process.env.REDIS_URI);
   console.log("conexion exitosa a redis");
 })();
 

@@ -86,6 +86,15 @@ const set = async (req, res) => {
         }
       });
     }
+    if(firstName == "" && lastName == "" && password == "" && nickName == "" && description == "" && urlImage == ""){
+      throw new Error('Invalid data')
+    }
+    if(nickName.length > 25){
+      throw new Error('"nickName" length must be less than or equal to 25 characters long')
+    }
+    if(description.length > 250){
+      throw new Error('"description" length must be less than or equal to 250 characters long')
+    }
 
     updateFields = {};
     if (firstName) {

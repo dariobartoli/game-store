@@ -17,7 +17,7 @@ const register = async (req, res) => {
         const user = await newUser.save()
         const sanitizedUser = { ...user._doc }; //creamos una copia del usuario y eliminamos la pass al json que queremos mostrar
         delete sanitizedUser.password;
-        return res.status(201).json({ message:"user saved" , sanitizedUser});  
+        return res.status(201).json({ message:"successful registration" , sanitizedUser});  
     } catch (error) {
         console.log(error);
         return res.status(500).json({message: error.message})

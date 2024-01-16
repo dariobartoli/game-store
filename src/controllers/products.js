@@ -115,7 +115,7 @@ const addImages = async(req, res) => {
 const del = async(req, res) => {
     try {
         const {id} = req.params
-        product = await ProductModel.findByIdAndRemove(id)
+        product = await ProductModel.findByIdAndDelete(id)
         return res.status(200).json({message: "product removed"})
     } catch (error) {
         return res.status(500).json({message: "it has ocurred an error", error: error})    

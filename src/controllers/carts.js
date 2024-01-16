@@ -52,10 +52,10 @@ const cleanCart = async(req, res) => {
         if (!user.cart) {
             return res.status(400).json({message: "you don't have anything in your cart"})
         }
-        await CartModel.findByIdAndRemove(user.cart);
+        await CartModel.findByIdAndDelete(user.cart);
         user.cart = undefined;
         await user.save();
-        return res.status(200).json({message: "cart cleaned"})
+        return res.status(200).json({message: "cart emptied"})
     } catch (error) {
         return res.status(500).json({message: error.message})
     }
@@ -98,7 +98,6 @@ const getCart = async(req,res) => {
 
 const purchase = async(req,res) => {
     try {
-        console.log("hola");
         const userId = req.user.id
         const user = await UserModel.findById(userId)
         if (!user.cart) {
@@ -112,12 +111,10 @@ const purchase = async(req,res) => {
             if (variant) {
                 total += variant.price;
             }
-            console.log(total);
         }
         if(user.wallet < total.toFixed(2)){
             return res.status(400).json({message: "insufficient balance"})
         }
-
         user.wishlist = user.wishlist.filter(wishlistGameId => {
             return !cart.gamesInCart.some(cartGame => wishlistGameId.equals(cartGame.game));
         }); //Utilizamos cart.gamesInCart.some() para verificar si un juego en la lista de deseos (user.wishlist) está en el carrito de compra (cart.gamesInCart)
@@ -127,7 +124,7 @@ const purchase = async(req,res) => {
         for (const item of cart.gamesInCart) {
             user.games.push(item.game)
         }
-        await CartModel.findByIdAndRemove(user.cart);
+        await CartModel.findByIdAndDelete(user.cart);
         user.cart = undefined;
         await user.save();
         redisClient.set(req.user.id.valueOf(), JSON.stringify(user), {
